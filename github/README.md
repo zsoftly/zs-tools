@@ -10,6 +10,8 @@ Use Bash and an authenticated `gh` session with repository creation and administ
 
 Columns are `name`, `visibility`, `profile`, `state`, and `purpose`. `profile` is nonempty metadata. Visibility is `public` or `private`; state is `proposed` or `existing`. GitHub remains the naming authority. The script only rejects unsafe local owner and repository segments.
 
+For the `zsoftly` owner, a `proposed` row must also follow the business unit rule: `zcp-<name>` only for a repository that is exclusively about the ZSoftly Cloud Platform, `zs-<name>` for company-wide work including all AWS work, `zps-<client>-<project>` for client work, and `zbc-<name>` for the bootcamp. Names are lowercase kebab-case. `.github` and `existing` rows are exempt. Never reuse the old name of a renamed repository: it would break GitHub's redirect.
+
 ```tsv
 # name	visibility	profile	state	purpose
 sample-app	public	source	proposed	Sample application
