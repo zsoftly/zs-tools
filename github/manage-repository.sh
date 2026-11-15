@@ -103,6 +103,13 @@ IFS=$'\t' read -r name visibility profile state purpose <<<"$record"
 [[ "$visibility" == "public" || "$visibility" == "private" ]] || fail "invalid visibility for: $repository"
 [[ "$state" == "proposed" || "$state" == "existing" ]] || fail "invalid state for: $repository"
 
+readonly zsoftly_name_rule='zcp-<name> only for a repository that is exclusively about the ZSoftly Cloud Platform; zs-<name> for company-wide work, including all AWS work; zps-<client>-<project> for client work; zbc-<name> for the bootcamp'
+owner_lower="$(printf '%s' "$owner" | tr '[:upper:]' '[:lower:]')"
+if [[ "$owner_lower" == "zsoftly" && "$state" == "proposed" && "$name" != ".github" ]]; then
+  [[ "$name" =~ ^(zcp|zs|zbc)-[a-z0-9]+(-[a-z0-9]+)*$ || "$name" =~ ^zps-[a-z0-9]+(-[a-z0-9]+)+$ ]] ||
+    fail "repository name breaks the zsoftly naming rule: $name. Use lowercase kebab-case with a business unit prefix: $zsoftly_name_rule. Never reuse a renamed repository's old name."
+fi
+
 full_name="$owner/$name"
 
 print_plan() {

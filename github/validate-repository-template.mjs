@@ -23,6 +23,10 @@ custom.app\tpublic\tcustom-profile\tproposed\tCustom profile repository
 .github-private\tprivate\tmetadata\tproposed\tPrivate dot-prefixed repository
 _samples\tpublic\texamples\tproposed\tSample collection
 existing-app\tprivate\toperations\texisting\tExisting repository
+zs-new-app\tprivate\tsource\tproposed\tCompany-wide repository
+zps-acme-portal\tprivate\tsource\tproposed\tClient repository
+zps-acme\tprivate\tsource\tproposed\tClient repository without a project
+New_App\tprivate\tsource\tproposed\tUnprefixed repository
 `;
 const branch = "release/v1+special chars";
 const encodedBranch = "release%2Fv1%2Bspecial%20chars";
@@ -187,6 +191,14 @@ for (const repository of [".github-private", "_samples"]) {
     repository,
   ]);
   assert.match(validName.stdout, new RegExp(`Repository: example-org/${repository}`));
+}
+for (const repository of ["zs-new-app", "zps-acme-portal", ".github", "existing-app"]) {
+  succeeds("zsoftly naming rule accepts " + repository, ["--owner", "ZSoftly", "--repository", repository]);
+}
+for (const repository of ["sample-app", "zps-acme", "New_App"]) {
+  const rejected = fails("zsoftly naming rule rejects " + repository, ["--owner", "zsoftly", "--repository", repository]);
+  assert.match(rejected.stderr, /breaks the zsoftly naming rule/);
+  assert.equal(rejected.log, "");
 }
 const transient = succeeds(
   "post-create retry",
